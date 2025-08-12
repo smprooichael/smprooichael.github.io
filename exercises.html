@@ -1,0 +1,232 @@
+<section class="exercises-section">
+  <h2>تمرین‌ها</h2>
+
+  <div class="level-selector">
+    <label for="level">انتخاب سطح:</label>
+    <select id="level" onchange="loadQuestions()">
+      <option value="A1">سطح A1</option>
+      <option value="A2">سطح A2</option>
+      <option value="B1">سطح B1</option>
+    </select>
+  </div>
+
+  <form id="exercise-form">
+    <!-- سوالات اینجا ظاهر می‌شوند -->
+  </form>
+
+  <button id="check-btn" onclick="checkAnswers()">بررسی جواب</button>
+  <div id="result" style="margin-top:1rem; font-weight:bold;"></div>
+</section>
+
+<style>
+  .exercises-section {
+    max-width: 700px;
+    margin: 2rem auto;
+    background: #f8f9f5;
+    padding: 1.5rem 2rem;
+    border-radius: 1rem;
+    font-family: 'IRANSans', sans-serif;
+    color: #2f2f2f;
+  }
+  .exercises-section h2 {
+    color: #4a5b49;
+    text-align: center;
+    margin-bottom: 1rem;
+  }
+  .level-selector {
+    margin-bottom: 1.5rem;
+    text-align: center;
+  }
+  label {
+    font-weight: bold;
+    margin-right: 0.5rem;
+  }
+  select {
+    padding: 0.4rem 0.8rem;
+    border-radius: 0.4rem;
+    border: 1px solid #ccc;
+    font-size: 1rem;
+  }
+  form > div {
+    margin-bottom: 1.2rem;
+    background: #eaf0ea;
+    padding: 1rem;
+    border-radius: 0.6rem;
+  }
+  form h3 {
+    margin: 0 0 0.7rem 0;
+    color: #495c49;
+  }
+  label.option-label {
+    display: block;
+    margin: 0.3rem 0;
+    cursor: pointer;
+  }
+  input[type="radio"], input[type="checkbox"] {
+    margin-left: 0.5rem;
+  }
+  input[type="text"] {
+    width: 100%;
+    padding: 0.5rem;
+    border-radius: 0.4rem;
+    border: 1px solid #ccc;
+  }
+  #check-btn {
+    background-color: #d4af37;
+    border: none;
+    color: #222;
+    font-size: 1.1rem;
+    padding: 0.7rem 1.5rem;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    display: block;
+    margin: 0 auto;
+    transition: background-color 0.3s;
+  }
+  #check-btn:hover {
+    background-color: #c59f2f;
+  }
+  #result {
+    text-align: center;
+    font-size: 1.2rem;
+  }
+</style>
+
+<script>
+  const questions = {
+    A1: [
+      {
+        type: "multiple",
+        question: "کدام گزینه ترجمه 'Hallo' است؟",
+        options: ["سلام", "خداحافظ", "بله", "نه"],
+        answer: "سلام"
+      },
+      {
+        type: "truefalse",
+        question: "کلمه 'Danke' به معنی 'متشکرم' است.",
+        answer: true
+      },
+      {
+        type: "text",
+        question: "چند سلام کردن به آلمانی را بنویسید؟",
+        answer: ["hallo", "guten tag"]
+      }
+    ],
+    A2: [
+      {
+        type: "multiple",
+        question: "کدام جمله صحیح است؟",
+        options: [
+          "Ich habe Hunger.",
+          "Ich bist Hunger.",
+          "Ich hat Hunger.",
+          "Ich sind Hunger."
+        ],
+        answer: "Ich habe Hunger."
+      },
+      {
+        type: "truefalse",
+        question: "کلمه 'Bitte' به معنی 'لطفاً' است.",
+        answer: true
+      },
+      {
+        type: "text",
+        question: "لطفاً ترجمه کلمه 'Buch' را بنویسید.",
+        answer: ["کتاب", "book"]
+      }
+    ],
+    B1: [
+      {
+        type: "multiple",
+        question: "کدام گزینه معادل صحیح 'Ich habe keine Zeit.' است؟",
+        options: [
+          "من زمان ندارم.",
+          "من زمان دارم.",
+          "من گرسنه هستم.",
+          "من خوشحالم."
+        ],
+        answer: "من زمان ندارم."
+      },
+      {
+        type: "truefalse",
+        question: "کلمه 'Freund' به معنی 'دوست' است.",
+        answer: true
+      },
+      {
+        type: "text",
+        question: "لطفاً یک جمله با 'Freund' بنویسید.",
+        answer: [] // اینجا نمره بر اساس ورود متنی نخواهد بود
+      }
+    ]
+  };
+
+  function loadQuestions() {
+    const level = document.getElementById('level').value;
+    const form = document.getElementById('exercise-form');
+    form.innerHTML = '';
+
+    questions[level].forEach((q, index) => {
+      const div = document.createElement('div');
+      let html = `<h3>سوال ${index + 1}:</h3><p>${q.question}</p>`;
+
+      if (q.type === "multiple") {
+        q.options.forEach((opt, i) => {
+          html += `
+            <label class="option-label">
+              <input type="radio" name="q${index}" value="${opt}"> ${opt}
+            </label>`;
+        });
+      } else if (q.type === "truefalse") {
+        html += `
+          <label class="option-label">
+            <input type="radio" name="q${index}" value="true"> درست
+          </label>
+          <label class="option-label">
+            <input type="radio" name="q${index}" value="false"> غلط
+          </label>`;
+      } else if (q.type === "text") {
+        html += `<input type="text" name="q${index}" placeholder="جواب خود را وارد کنید">`;
+      }
+
+      div.innerHTML = html;
+      form.appendChild(div);
+    });
+
+    document.getElementById('result').innerHTML = '';
+  }
+
+  function checkAnswers() {
+    const level = document.getElementById('level').value;
+    let score = 0;
+    let total = questions[level].length;
+
+    for (let i = 0; i < total; i++) {
+      const q = questions[level][i];
+      const userAnswer = document.querySelector(`[name="q${i}"]:checked`)?.value 
+                         || document.querySelector(`[name="q${i}"]`)?.value?.trim().toLowerCase();
+
+      if (!userAnswer) continue; // جواب نداده
+
+      if (q.type === "multiple") {
+        if (userAnswer === q.answer) score++;
+      } else if (q.type === "truefalse") {
+        if ((userAnswer === "true" && q.answer === true) || (userAnswer === "false" && q.answer === false)) {
+          score++;
+        }
+      } else if (q.type === "text") {
+        // جواب متن برای A1 و A2 پاسخ مشخص داره، B1 خیر
+        if (q.answer.length > 0) {
+          if (q.answer.some(ans => ans.toLowerCase() === userAnswer)) {
+            score++;
+          }
+        } else {
+          // سوال باز (مثلاً جمله سازی) هیچ نمره‌ای داده نمی‌شود
+        }
+      }
+    }
+
+    document.getElementById('result').textContent = `امتیاز شما: ${score} از ${total}`;
+  }
+
+  window.onload = loadQuestions;
+</script>
